@@ -5,8 +5,9 @@ import request from 'request';
 import Joystick from './components/Joystick';
 import Temperature from './components/Temperature';
 
-const ip = 'http://localhost';
-const port = 5000;
+// const ip = 'http://pi.local';
+const ip = 'http://pi.local';
+const port = 80;
 
 const socket = io(`${ip}:${port}`, { rememberTransport: false });
 

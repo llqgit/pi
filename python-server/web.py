@@ -1,16 +1,13 @@
 from flask import Flask
 import threading
-import t_90
+import motor
 #from
 
 root_path = '/gpio'
 
-motor = t_90
-
 app = Flask(__name__)
 @app.route(root_path)
 def hello():
-    print t_90
     return 'Hello World!'
 
 @app.route(root_path + '/left')

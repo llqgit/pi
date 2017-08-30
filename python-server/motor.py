@@ -3,6 +3,7 @@
 
 from RPi import GPIO
 from time import sleep
+import val
 
 s1 = 24  # up
 s2 = 23  # left
@@ -41,11 +42,34 @@ def changeAllDuty(dcX, dcY, time=0.02):
 
 # -90 <= x, y <= 90
 def move(newX, newY):
-    val.isMoving = True
-    val.x = newX
-    val.y = newY
-    val.horizontal = 0.5 + (val.x + 90) / 90
-    val.vertical = 0.5 + (val.y + 90) / 90
+    if val.lastX != newX and val.lastY != newY:
+        val.isMoving = True
+        val.x = newX
+        val.y = newY
+        #print '---- ' + str(val.x) + '  ' + str(val.y)
+        tempHorizontal = 2.5 + (val.x + 90) / 18
+        tempVertical = 2.5 + (val.y + 90) / 18
+        #print str(tempHorizontal) + '  ' + str(tempVertical)
+        if tempHorizontal >= 12.5:
+            tempHorizontal = 12.5
+        elif tempHorizontal <= 2.5:
+            tempHorizontal = 2.5
+
+        if tempVertical >= 12.5:
+            tempVertical = 12.5
+        elif tempVertical <= 2.5:
+            tempVertical = 2.5
+
+        val.horizontal = tempHorizontal
+        val.vertical = tempVertical
+        val.steps.append({ 'horizontal': val.horizontal, 'vertical': val.vertical })
+
+        val.lastX = newX
+        val.lastY = newY
+        #print str(val.horizontal) + '  ' + str(val.vertical)
+    else:
+        if len(val.steps) == 0:
+            val.isMoving = False
 
 def stop():
     val.isMoving = False
@@ -53,7 +77,15 @@ def stop():
 def run():
     while True:
         if val.isMoving == True:
-            changeAllDuty(val.horizontal, val.vertical)
-            sleep(0.02)
+            if len(val.steps) > 0:
+                if len(val.steps) > 8:
+                    val.steps.pop(0)
+                    val.steps.pop(0)
+                    val.steps.pop(0)
+                    val.steps.pop(0)
+                step = val.steps.pop(0)
+                changeAllDuty(step['horizontal'], step['vertical'])
+            #sleep(0.02)
+        sleep(0.02)
 
 #GPIO.cleanup()
