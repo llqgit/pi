@@ -2,6 +2,8 @@ import React from 'react';
 import mirror, {actions, connect, render} from 'mirrorx';
 import io from 'socket.io-client';
 import request from 'request';
+import Joystick from './components/Joystick';
+import Temperature from './components/Temperature';
 
 const ip = 'http://localhost';
 const port = 5000;
@@ -47,7 +49,13 @@ mirror.model({
       // actions.app.increment()
     },
     async down() {
-      socket.emit('message', 'down');
+      socket.emit('event', { type: 'down' });
+    },
+    async move(position) {
+      socket.emit('event', { type: 'move', x: position.x, y: position.y });
+    },
+    async stop() {
+      socket.emit('event', { type: 'stop' });
     },
   }
 })
@@ -58,14 +66,11 @@ const App = connect(state => {
 })(props => (
     <div>
       <h1>{props.count}</h1>
-      {/* 调用 actions 上的方法来 dispatch action */}
-      <button
-        // onClick={() => actions.app.decrement()}
-        onMouseDown={() => actions.app.down()}
-        onMouseUp={() => actions.app.up()}
-      >
-        push me
-      </button>
+      <Temperature value={69} />
+      <Joystick
+        onDrag={(position) => { actions.app.move(position) }}
+        onStop={() => { actions.app.stop() }}
+      />
     </div>
   )
 )

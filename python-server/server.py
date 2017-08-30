@@ -1,6 +1,8 @@
 import eventlet
+import json
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send, emit
+#import motor
 
 count = 0
 
@@ -16,6 +18,17 @@ def chat_connect():
 def chat_disconnect():
     print ("Client disconnected")
 
+@socketio.on('event')
+def handle_event(payload):
+    type = payload['type']
+    if type == 'move':
+        x = payload['x']
+        y = payload['y']
+        print str(x) + ' ' + str(y)
+    elif type == 'stop':
+        print 'stop'
+
+
 @socketio.on('message')
 def handle_message(message):
     global count
@@ -25,6 +38,14 @@ def handle_message(message):
         emit('message', count, include_self=True)
     elif message == 'down':
         count = count - 1
+        print count
+        emit('message', count, include_self=True)
+    elif message == 'move':
+        count = count - 1
+        print count
+        emit('message', count, include_self=True)
+    elif message == 'stop':
+        count = count - 2
         print count
         emit('message', count, include_self=True)
     print('received message: ' + message)
