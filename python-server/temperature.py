@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+import commands 
 
 def get_cpu_temp():
     tempFile = open('/sys/class/thermal/thermal_zone0/temp' )

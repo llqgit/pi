@@ -4,8 +4,8 @@ import Draggable from 'react-draggable';
 class Joystick extends Component {
   constructor(props) {
     super(props);
-    const r = 100;
-    const btnR = 25;
+    const r = props.r || 100;
+    const btnR = props.btnR || 25;
     const defaultX = r - btnR;
     const defaultY = r - btnR;
     const x = defaultX;
@@ -62,7 +62,7 @@ class Joystick extends Component {
           // bounds=".parent"
           defaultPosition={{x: this.state.defaultX, y: this.state.defaultY}}
           position={{ x: this.state.x, y: this.state.y }}
-          grid={[1, 1]}
+          grid={[0.5, 0.5]}
           onStart={this.onHandleStart}
           onDrag={this.onHandleDrag}
           onStop={this.onHandleStop}>
