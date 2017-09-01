@@ -28,7 +28,7 @@ def getVertical():
 def cleanup():
     GPIO.cleanup()
 
-def changeDuty(p, dc, time=0.2):
+def changeDuty(p, dc, time=0.02):
     p.ChangeDutyCycle(dc)         # 设置转动角度
     sleep(time)                   # 等该20ms周期结束
     p.ChangeDutyCycle(0)          # 归零信号
@@ -42,8 +42,7 @@ def changeAllDuty(dcX, dcY, time=0.02):
 
 # -90 <= x, y <= 90
 def move(newX, newY):
-    if val.lastX != newX and val.lastY != newY:
-        val.isMoving = True
+    if val.lastX != newX or val.lastY != newY:
         val.x = newX
         val.y = newY
         #print '---- ' + str(val.x) + '  ' + str(val.y)
@@ -62,30 +61,24 @@ def move(newX, newY):
 
         val.horizontal = tempHorizontal
         val.vertical = tempVertical
-        val.steps.append({ 'horizontal': val.horizontal, 'vertical': val.vertical })
-
-        val.lastX = newX
-        val.lastY = newY
+        #val.steps.append({ 'horizontal': val.horizontal, 'vertical': val.vertical })
         #print str(val.horizontal) + '  ' + str(val.vertical)
-    else:
-        if len(val.steps) == 0:
-            val.isMoving = False
 
-def stop():
-    val.isMoving = False
+def up():
+    move(val.x, val.y - 1)
+def down():
+    move(val.x, val.y + 1)
+def left():
+    move(val.x - 1, val.y)
+def right():
+    move(val.x + 1, val.y)
 
 def run():
     while True:
-        if val.isMoving == True:
-            if len(val.steps) > 0:
-                if len(val.steps) > 8:
-                    val.steps.pop(0)
-                    val.steps.pop(0)
-                    val.steps.pop(0)
-                    val.steps.pop(0)
-                step = val.steps.pop(0)
-                changeAllDuty(step['horizontal'], step['vertical'])
-            #sleep(0.02)
-        sleep(0.02)
-
+        if val.x != val.lastX or val.y != val.lastY:
+            changeAllDuty(val.horizontal, val.vertical)
+            val.lastX = val.x
+            val.lastY = val.y
+        else:
+            sleep(0.02)
 #GPIO.cleanup()

@@ -55,31 +55,14 @@ def handle_event(payload):
         y = payload['y']
         #print str(x) + ' ' + str(y)
         motor.move(x, y)
-    elif type == 'stop':
-        print 'stop'
-        motor.stop()
-
-
-@socketio.on('message')
-def handle_message(message):
-    global count
-    if message == 'up':
-        count = count + 1
-        print count
-        emit('message', count, include_self=True)
-    elif message == 'down':
-        count = count - 1
-        print count
-        emit('message', count, include_self=True)
-    elif message == 'move':
-        count = count - 1
-        print count
-        emit('message', count, include_self=True)
-    elif message == 'stop':
-        count = count - 2
-        print count
-        emit('message', count, include_self=True)
-    print('received message: ' + message)
+    elif type == 'up':
+        motor.up()
+    elif type == 'down':
+        motor.down()
+    elif type == 'left':
+        motor.left()
+    elif type == 'right':
+        motor.right()
 
 if __name__ == '__main__':
     t = threading.Thread(target=motor.run)
